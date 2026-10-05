@@ -1,0 +1,23 @@
+[workspace]
+name = "lab_1"
+version = "0.1.0"
+description = "Консольное приложение для управления списком студентов и их оценок (CSV)"
+authors = ["Kotovnya <kotov.nya.q@gmail.com>"]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.10,<3.13"
+
+[feature.dev.dependencies]
+pytest = ">=8.0.0"
+ruff = ">=0.3.0"
+
+[environments]
+default = ["dev"]
+
+[tasks]
+start = "python -m lab.main"
+test = "pytest"
+lint = "ruff check lab tests"
+format = "ruff format lab tests"
