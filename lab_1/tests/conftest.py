@@ -1,6 +1,7 @@
 """Общие фикстуры для тестирования лабораторной работы."""
 
 from pathlib import Path
+
 import pytest
 
 from lab.models import Student

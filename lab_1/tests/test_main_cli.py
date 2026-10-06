@@ -1,6 +1,7 @@
 """Интеграционные тесты консольного интерфейса пользователя."""
 
 from pathlib import Path
+
 import pytest
 
 from lab.cli.app import CLIApp

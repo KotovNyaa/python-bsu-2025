@@ -24,10 +24,7 @@ def _is_header_row(row: list[str]) -> bool:
     if first_cell in header_id_tokens:
         return True
 
-    if len(row) > 1 and row[1].strip().lower() in header_name_tokens:
-        return True
-
-    return False
+    return bool(len(row) > 1 and row[1].strip().lower() in header_name_tokens)
 
 
 def read_students_from_csv(file_path: str | Path) -> list[Student]:
