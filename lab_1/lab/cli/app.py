@@ -18,6 +18,9 @@ from lab.io_utils import (
 from lab.models import Student
 from lab.processing import StudentGroup
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+
 
 class CLIApp:
     """Класс управления жизненным циклом программы и командами меню."""
@@ -28,14 +31,35 @@ class CLIApp:
 
     @staticmethod
     def _resolve_read_path(raw_path: str) -> str:
-        """Проверяет путь и автоматически ищет файл в папке data/."""
-        path = Path(raw_path)
-        if not path.is_file():
-            fallback = Path("data") / raw_path
-            if fallback.is_file():
-                print(f"-> Файл найден в директории 'data/': {fallback}")
-                return str(fallback)
+        """Ищет файл: в первую очередь в папке data/ проекта, затем по CWD/абсолютному пути."""
+        raw_p = Path(raw_path)
+
+        candidate_data = DATA_DIR / raw_p.name
+        if candidate_data.is_file():
+            print(f"-> Файл найден в директории 'data/': {candidate_data}")
+            return str(candidate_data)
+
+        if raw_p.is_file():
+            return str(raw_p.resolve())
+
+        candidate_sub = DATA_DIR / raw_path
+        if candidate_sub.is_file():
+            print(f"-> Файл найден в директории 'data/': {candidate_sub}")
+            return str(candidate_sub)
+
         return raw_path
+
+    @staticmethod
+    def _resolve_write_path(raw_path: str) -> str:
+        """Направляет сохранение строго в папку data/ проекта для относительных путей."""
+        path = Path(raw_path)
+        if path.is_absolute():
+            return str(path)
+
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        target = DATA_DIR / path.name
+        print(f"-> Файл будет сохранен в папку 'data/': {target}")
+        return str(target)
 
     def run(self) -> None:
         """Запускает основной цикл меню."""
@@ -103,6 +127,7 @@ class CLIApp:
             print("Ошибка: путь сохранения не указан.")
             return
 
+        path = self._resolve_write_path(path)
         write_students_to_csv(path, self.group.get_all())
         self.current_file = path
         print(f"Данные ({len(self.group)} студентов) успешно сохранены в '{path}'")
@@ -163,7 +188,8 @@ class CLIApp:
             min_val=1,
             max_val=len(self.group),
         )
-        path = ask_string("Путь к CSV для сохранения ТОП-N: ")
+        raw_path = ask_string("Путь к CSV для сохранения ТОП-N: ")
+        path = self._resolve_write_path(raw_path)
         top_list = self.group.get_top(n)
         export_top_students_csv(path, top_list)
         print(f"ТОП-{n} студентов успешно экспортирован в '{path}'")
