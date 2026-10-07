@@ -1,13 +1,14 @@
 [workspace]
 name = "lab_1"
 version = "0.1.0"
-description = "Консольное приложение для управления списком студентов и их оценок (CSV)"
+description = "Консольное и веб-приложение для управления списком студентов и их оценок"
 authors = ["Kotovnya <kotov.nya.q@gmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [dependencies]
 python = ">=3.10,<3.13"
+flask = ">=3.0.0"
 
 [feature.dev.dependencies]
 pytest = ">=8.0.0"
@@ -18,6 +19,7 @@ default = ["dev"]
 
 [tasks]
 start = "python -m lab.main"
-test = "pytest"
+start-web = "python -m lab.web_main"
+test = "python -m pytest"
 lint = "ruff check lab tests"
 format = "ruff format lab tests"
