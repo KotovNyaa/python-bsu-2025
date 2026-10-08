@@ -12,4 +12,4 @@ COPY . /app
 
 EXPOSE 5000
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "lab.web.app:create_app()"]
+CMD ["sh", "-c", "gunicorn -w 1 -b 0.0.0.0:${PORT:-5000} 'lab.web.app:create_app()'"]
